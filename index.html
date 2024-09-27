@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="./css/fonts.css">
     <link rel="stylesheet" href="./css/index.css">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
-    <script src="./script/index.js" defer></script>
-    
+    <script src="./script/index.js" defer type="module"></script>
+
 </head>
 <body class="container main">
   <header class="main-header">
@@ -18,13 +18,13 @@
   <main class="main-content">
     <section class="main-content-container">
       <aside class="main-aside-container">
-        
+
         <h3 class="form-title">Select the type of file to upload:</h3>
         <form action="" class="types-form" id="files-form">
           <ul class="form-list">
             <li data-type="allowed">
               <input type="radio" name="file-type" value="allowed-files" id="allowed-files" checked>
-              <label for="csv-type">CSV, JSON, Excel</label>
+              <label for="allowed-files">CSV, JSON, Excel</label>
             </li>
             <li data-type="raw">
               <input type="radio" name="file-type" value="raw" id="raw-type" >
@@ -38,7 +38,7 @@
             </li>
           </ul>
           <p id="info-container"></p>
-          
+
           <button class="submit-button" type="submit" disabled id="submit-button">Upload</button>
         </form>
       </aside>
@@ -46,12 +46,12 @@
         <div id="table-container">+</div>
       </section>
     </section>
-    
-      
+
+
   </main>
   <footer class="main-footer">
       footer
   </footer>
-    
+
 </body>
 </html>
