@@ -25,6 +25,9 @@ html, body {
 }
 
 .main-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-height: 200px;
   background: rgb(63,94,251);
   background: -moz-radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(0,86,162,1) 100%);
@@ -72,35 +75,62 @@ html, body {
       width: 100%;
       resize: none;
     }
-    & > .submit-button {
-      padding: 12px 24px;
-      border: none;
-      cursor: pointer;
-      background-color: var(--mainBlue);
-      color: var(--mainWhite);
-      transition: background-color 0.3s ease-in-out 0s;
-      &:hover {
-        background-color: var(--darkerYellow)
-      }
-      &:focus {
-        outline: none;
-      }
-      &:disabled {
-        pointer-events: none;
-        background-color: var(--mainGray);
-        color: var(--mainBlack);
-      }
-    }
     & > #info-container {
       margin-bottom: 10px;
       color: var(--mainRed);
       font-size: 0.8rem;
+    }
+    & .drag-drop-container {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      border: 1px dashed var(--mainBlack);
+      border-radius: 8px;
+      background: var(--mainGray);
+      text-align: center;
+      vertical-align: middle;
+      padding-top: calc(50px - 12px);
+      & > .material-symbols-outlined {
+        text-align: center;
+        vertical-align: middle;
+        color: var(--mainBlack);
+        opacity: 0.4;
+      }
+      &.active {
+        box-shadow: 1px 1px 5px var(--lighterBlue);
+
+      }
+
     }
   }
 }
 
 .hidden {
   display: none;
+}
+
+.submit-button {
+  padding: 12px 24px;
+  margin-bottom: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--mainBlue);
+  color: var(--mainWhite);
+  transition: background-color 0.3s ease-in-out 0s;
+
+  &:hover {
+    background-color: var(--darkerYellow)
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    background-color: var(--mainGray);
+    color: var(--mainBlack);
+  }
 }
 
 .main-data-container {
@@ -114,7 +144,7 @@ html, body {
 
 
 .main-footer {
-  min-height:200px;
+  min-height:100px;
   background-color: white;
   &::before {
     content: '';
@@ -131,7 +161,6 @@ html, body {
   & > table, tr, td {
     border-collapse: collapse;
     border: 1px solid var(--mainGray);
-
   }
   & > table {
     overflow: scroll;

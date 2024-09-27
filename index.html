@@ -13,7 +13,7 @@
 </head>
 <body class="container main">
   <header class="main-header">
-      header
+      <h1>Building graphs according to uploaded data</h1>
   </header>
   <main class="main-content">
     <section class="main-content-container">
@@ -33,17 +33,27 @@
             <li class="hidden" data="textarea-hidden" >
               <textarea name="textarea" id="raw-data" rows="5" ></textarea>
             </li>
-            <li  data="upload-hidden" >
+            <li data="upload-hidden" >
+              <div class="drag-drop-container" id="drag-drop-zone">
+                <span class="material-symbols-outlined">download</span>
+                <span id="drop-uploaded-info"></span>
+              </div>
               <input type="file" id="upload-file" >
             </li>
           </ul>
           <p id="info-container"></p>
 
-          <button class="submit-button" type="submit" disabled id="submit-button">Upload</button>
+          <div>
+            <button class="submit-button" type="submit" disabled id="submit-button">Upload</button>
+            <button class="submit-button hidden"  id="chart-button">Create canvas</button>
+          </div>
+
         </form>
       </aside>
       <section class="main-data-container">
+        <canvas id="chart-canvas" class="hidden" width="600" height="300"></canvas>
         <div id="table-container">+</div>
+
       </section>
     </section>
 

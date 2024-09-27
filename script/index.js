@@ -8,6 +8,11 @@ const lIHiddenTextarea = formatTypesList.querySelector('li[data="textarea-hidden
 const lIHiddenUpload = formatTypesList.querySelector('li[data="upload-hidden"]')
 const tableContainerElement = document.getElementById("table-container");
 const textareaElement = document.getElementById('raw-data')
+const chartButtonElement = document.getElementById('chart-button');
+const dragAndDropZone = document.getElementById('drag-drop-zone');
+const dragAndDropEvents = ["dragover", "drop"];
+const dropUploadedInfo = document.getElementById('drop-uploaded-info');
+const iconDownload = dragAndDropZone.querySelector('span.material-symbols-outlined');
 
 let selectedFile = null
 
@@ -16,6 +21,48 @@ let checkedLiElement = ''
 document.addEventListener('DOMContentLoaded', () => {
 	checkedLiElement = formatTypesList.querySelector('[checked]')
 })
+
+
+
+dragAndDropEvents.forEach(function (event) {
+
+  document.addEventListener(event, function (evt) {
+    evt.preventDefault();
+    return false;
+  });
+});
+
+dragAndDropZone.addEventListener('drop', (event) => {
+  dragAndDropZone.classList.remove('active');
+  const file = event.dataTransfer?.files[0];
+
+  if (file && checkFileType(file)) {
+    inputUploadElement.files = event.dataTransfer.files;
+    selectedFile = event.dataTransfer.files[0];
+
+    dropUploadedInfo.innerText = `Uploaded: ${selectedFile.name}`;
+
+    console.log(iconDownload)
+    iconDownload.classList.add('hidden')
+    console.log(selectedFile)
+    submitButtonElement.disabled = false;
+    // console.log(inputUploadElement.files)
+  } else {
+    infoContainerElement.innerText = 'Incorrect file type! Allowed types - .csv, .json, .xls, .xlsx!'
+    inputUploadElement.value = null;
+    submitButtonElement.disabled = true;
+  }
+})
+
+dragAndDropZone.addEventListener('dragenter', () => {
+  dragAndDropZone.classList.add('active')
+})
+
+dragAndDropZone.addEventListener('dragleave', () => {
+  dragAndDropZone.classList.remove('active')
+})
+
+
 
 
 // radio buttons, show/hide textarea form
@@ -60,7 +107,9 @@ formatTypesList.addEventListener('click', (event) => {
 
 inputUploadElement.addEventListener('change', (event) => {
 
-	const file = inputUploadElement.files[0];
+	const file = inputUploadElement.files?.[0];
+
+  console.log('file', file)
 
   if (checkFileType(file)) {
     selectedFile = file;
@@ -217,9 +266,15 @@ formElement.addEventListener('submit', (event) => {
   console.log(selectedFile)
   if (!selectedFile) {
     uploadRawData()
+    chartButtonElement.classList.remove('hidden')
   } else {
+    dropUploadedInfo.innerText = '';
+    iconDownload.classList.remove('hidden')
     uploadFileData()
+    chartButtonElement.classList.remove('hidden')
   }
 
 })
+
+
 
