@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="./css/fonts.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" defer></script>
+    <script src="./script/index.js" defer></script>
+    
+</head>
+<body class="container main">
+  <header class="main-header">
+      header
+  </header>
+  <main class="main-content">
+    <section class="main-content-container">
+      <aside class="main-aside-container">
+        
+        <h3 class="form-title">Select the type of file to upload:</h3>
+        <form action="" class="types-form" id="files-form">
+          <ul class="form-list">
+            <li data-type="allowed">
+              <input type="radio" name="file-type" value="allowed-files" id="allowed-files" checked>
+              <label for="csv-type">CSV, JSON, Excel</label>
+            </li>
+            <li data-type="raw">
+              <input type="radio" name="file-type" value="raw" id="raw-type" >
+              <label for="raw-type">Enter raw data</label>
+            </li>
+            <li class="hidden" data="textarea-hidden" >
+              <textarea name="textarea" id="raw-data" rows="5" ></textarea>
+            </li>
+            <li  data="upload-hidden" >
+              <input type="file" id="upload-file" >
+            </li>
+          </ul>
+          <p id="info-container"></p>
+          
+          <button class="submit-button" type="submit" disabled id="submit-button">Upload</button>
+        </form>
+      </aside>
+      <section class="main-data-container">
+        <div id="table-container">+</div>
+      </section>
+    </section>
+    
+      
+  </main>
+  <footer class="main-footer">
+      footer
+  </footer>
+    
+</body>
+</html>

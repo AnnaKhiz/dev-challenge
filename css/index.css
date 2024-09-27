@@ -1,0 +1,144 @@
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* border: 1px solid red; */
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  background-color: #F1F1F1;
+}
+
+.container.main {
+  width: 1280px;
+  margin: auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  box-shadow: 1px 1px 5px #c3c0c0;
+}
+
+.main-header {
+  min-height: 200px;
+  background: rgb(63,94,251);
+  background: -moz-radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(0,86,162,1) 100%);
+  background: -webkit-radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(0,86,162,1) 100%);
+  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(0,86,162,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3f5efb",endColorstr="#0056a2",GradientType=1);
+}
+
+.main-content {
+  flex: 1 1 auto;
+}
+
+.main-content-container {
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: start;
+
+}
+
+.main-aside-container {
+  width: 20%;
+  height: 100%;
+  padding: 15px;
+  border-right: 1px solid #F1F1F1;
+  & > .form-title {
+    margin-bottom: 1rem;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  & > .types-form {
+    
+    & > .form-list {
+      margin-bottom: 0.5rem;
+      list-style-type: none;
+      & li:not(:last-of-type) {
+        margin-bottom: 8px;
+      }
+      & li > label {
+        font-size: 1.20.75rem;
+      }
+    
+    }
+    & li > textarea {
+      width: 100%;
+      resize: none;
+    }
+    & > .submit-button {
+      padding: 12px 24px;
+      border: none;
+      cursor: pointer;
+      background-color: #003366;
+      color: #FFFFFF;
+      transition: background-color 0.3s ease-in-out 0s;
+      &:hover {
+        background-color: #d3b300
+      }
+      &:focus {
+        outline: none;
+      }
+      &:disabled {
+        pointer-events: none;
+        background-color:#f1f1f1;
+        color:#000000;
+      }
+    }
+    & > #info-container {
+      margin-bottom: 10px;
+      color: #D32F2F;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.main-data-container {
+  height: 100%;
+  width: 80%;
+  padding: 15px;
+}
+
+
+
+
+
+.main-footer {
+  min-height:200px;
+  background-color: white;
+  &::before {
+    content: '';
+    display: block;
+    height: 2px;
+    background-color: #3f5efb;
+  }
+}
+
+#table-container {
+  max-height: 500px;
+  overflow: auto;
+  text-align: left;
+  & > table, tr, td {
+    border-collapse: collapse;
+    border: 1px solid #F1F1F1;
+    
+  }
+  & > table {
+    overflow: scroll;
+    & td, th {
+      padding: 5px;
+      
+    }
+  }
+  
+}
