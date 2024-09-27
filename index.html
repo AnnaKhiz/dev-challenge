@@ -20,7 +20,7 @@
       <aside class="main-aside-container">
 
         <h3 class="form-title">Select the type of file to upload:</h3>
-        <form action="" class="types-form" id="files-form">
+        <form action="" class="types-form aside-block-container" id="files-form">
           <ul class="form-list">
             <li data-type="allowed">
               <input type="radio" name="file-type" value="allowed-files" id="allowed-files" checked>
@@ -42,13 +42,29 @@
             </li>
           </ul>
           <p id="info-container"></p>
-
-          <div>
-            <button class="submit-button" type="submit" disabled id="submit-button">Upload</button>
-            <button class="submit-button hidden"  id="chart-button">Create canvas</button>
-          </div>
-
+          <button class="submit-button" type="submit" disabled id="submit-button">Upload</button>
         </form>
+
+        <div id="chart-options-container" class="aside-block-container hidden" >
+          <form action="">
+            <select name="diagram" id="diagram-type-select" class="chart-options-select">
+              <option value="none" selected disabled>
+                Select diagram type
+              </option>
+              <option value="linear">
+                Line graph
+              </option>
+              <option value="bar">
+                Bar chart
+              </option>
+              <option value="chart">
+                Pie chart
+              </option>
+            </select>
+            <button class="submit-button"  id="chart-button">Create canvas</button>
+          </form>
+        </div>
+
       </aside>
       <section class="main-data-container">
         <canvas id="chart-canvas" class="hidden" width="600" height="300"></canvas>

@@ -111,7 +111,6 @@ html, body {
 
 .submit-button {
   padding: 12px 24px;
-  margin-bottom: 10px;
   border: none;
   cursor: pointer;
   background-color: var(--mainBlue);
@@ -138,7 +137,18 @@ html, body {
   width: 80%;
   padding: 15px;
 }
-
+.aside-block-container {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid var(--mainGray);
+}
+.chart-options-select {
+  display: block;
+  width: 50%;
+  padding: 5px;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
 
 
 

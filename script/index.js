@@ -13,6 +13,8 @@ const dragAndDropZone = document.getElementById('drag-drop-zone');
 const dragAndDropEvents = ["dragover", "drop"];
 const dropUploadedInfo = document.getElementById('drop-uploaded-info');
 const iconDownload = dragAndDropZone.querySelector('span.material-symbols-outlined');
+const chartOptionsContainerElement = document.getElementById('chart-options-container');
+const diagramTypeSelect = document.getElementById('diagram-type-select')
 
 let selectedFile = null
 
@@ -266,15 +268,82 @@ formElement.addEventListener('submit', (event) => {
   console.log(selectedFile)
   if (!selectedFile) {
     uploadRawData()
-    chartButtonElement.classList.remove('hidden')
+    chartOptionsContainerElement.classList.remove('hidden')
   } else {
     dropUploadedInfo.innerText = '';
     iconDownload.classList.remove('hidden')
     uploadFileData()
-    chartButtonElement.classList.remove('hidden')
+    chartOptionsContainerElement.classList.remove('hidden')
   }
 
 })
 
+function createCanvas() {
+  const table = document.querySelector('#table-container > table');
+  console.log(table)
+  const rows = table.querySelectorAll('tr');
 
+  const labels = [];
+  const values = [];
+
+  // Проходим по строкам таблицы, начиная со второй (пропускаем заголовки)
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].querySelectorAll('td');
+    labels.push(cells[0].innerText);  // Категории
+    values.push(parseInt(cells[1].innerText));  // Значения
+  }
+
+  // Настройки диаграммы
+  const canvas = document.getElementById('chart-canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Очищаем canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const maxVal = Math.max(...values);  // Максимальное значение
+  const chartHeight = canvas.height - 50;  // Высота диаграммы
+  const barWidth = (canvas.width - 50) / values.length;  // Ширина столбца
+
+  // Рисуем столбцы
+  values.forEach((value, index) => {
+    const barHeight = (value / maxVal) * chartHeight;
+
+    // Координаты и размеры столбца
+    const x = 50 + index * barWidth;
+    const y = canvas.height - barHeight - 30;
+
+    // Цвет столбца
+    ctx.fillStyle = 'rgba(0, 102, 204, 0.7)';
+    ctx.fillRect(x, y, 10, barHeight);  // Рисуем столбец
+
+    // Подпись категории
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[index], x + (barWidth / 2) - 5, canvas.height - 10);
+
+    // Подпись значений
+    ctx.fillText(value, x + (barWidth / 2) - 5, y - 5);
+  });
+
+  // Рисуем ось Y
+  ctx.beginPath();
+  ctx.moveTo(0, 10);
+  ctx.lineTo(0, canvas.height - 30);
+  ctx.stroke();
+
+  // Рисуем ось X
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height - 30);
+  ctx.lineTo(canvas.width, canvas.height - 30);
+  ctx.stroke();
+}
+
+diagramTypeSelect.addEventListener('change', (e) => {
+  console.log(e.target.value)
+})
+chartButtonElement.addEventListener('click', () => {
+  const canvas = document.getElementById('chart-canvas');
+  canvas.classList.remove('hidden')
+  createCanvas()
+})
 
