@@ -14,10 +14,10 @@ const dragAndDropEvents = ["dragover", "drop"];
 const dropUploadedInfo = document.getElementById('drop-uploaded-info');
 const iconDownload = dragAndDropZone.querySelector('span.material-symbols-outlined');
 const chartOptionsContainerElement = document.getElementById('chart-options-container');
-const diagramTypeSelect = document.getElementById('diagram-type-select')
+const diagramTypeSelect = document.getElementById('diagram-type-select');
 
 let selectedFile = null
-
+let selectedDiagramType = 'bar';
 let checkedLiElement = ''
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -164,7 +164,7 @@ function uploadAndRenderJSONFile(e) {
 
 	const headerHTML = `
 			<tr>
-					${headers.map(header => `<th>${header}</th>`).join('')}
+					${headers.map(header => `<td>${header}</td>`).join('')}
 			</tr>
 	`;
 
@@ -201,7 +201,7 @@ function uploadAndRenderCSVFile(e) {
 
 	const headerHTML = `
 			<tr>
-					${headers.map(header => `<th>${header}</th>`).join('')}
+					${headers.map(header => `<td>${header}</td>`).join('')}
 			</tr>
 	`;
 
@@ -278,72 +278,209 @@ formElement.addEventListener('submit', (event) => {
 
 })
 
-function createCanvas() {
+function createCanvasBarDiagram() {
+
   const table = document.querySelector('#table-container > table');
-  console.log(table)
   const rows = table.querySelectorAll('tr');
 
   const labels = [];
   const values = [];
+  const headers = [];
 
-  // Проходим по строкам таблицы, начиная со второй (пропускаем заголовки)
-  for (let i = 1; i < rows.length; i++) {
-    const cells = rows[i].querySelectorAll('td');
-    labels.push(cells[0].innerText);  // Категории
-    values.push(parseInt(cells[1].innerText));  // Значения
+  const rowElements = rows[0].querySelectorAll('td')
+
+  for (let i = 0; i < rowElements.length; i++) {
+    const cells = rows[0].querySelectorAll('td');
+    headers.push(cells[i].innerText)
   }
 
-  // Настройки диаграммы
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].querySelectorAll('td');
+    labels.push(cells[0].innerText);
+    values.push(Number.isNaN(cells[1].innerText) ? parseInt(cells[1].innerText) : cells[1].innerText);
+  }
+
+  console.log(labels)
+  console.log(values)
+
   const canvas = document.getElementById('chart-canvas');
   const ctx = canvas.getContext('2d');
 
-  // Очищаем canvas
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const maxVal = Math.max(...values);  // Максимальное значение
-  const chartHeight = canvas.height - 50;  // Высота диаграммы
-  const barWidth = (canvas.width - 50) / values.length;  // Ширина столбца
+  const maxVal = Math.max(...values);
+  const chartHeight = canvas.height - 50;
+  const barWidth = (canvas.width - 50) / values.length;
 
-  // Рисуем столбцы
+
   values.forEach((value, index) => {
     const barHeight = (value / maxVal) * chartHeight;
 
-    // Координаты и размеры столбца
+
     const x = 50 + index * barWidth;
     const y = canvas.height - barHeight - 30;
 
-    // Цвет столбца
-    ctx.fillStyle = 'rgba(0, 102, 204, 0.7)';
-    ctx.fillRect(x, y, 10, barHeight);  // Рисуем столбец
 
-    // Подпись категории
+    ctx.fillStyle = 'rgba(0, 102, 204, 0.7)';
+    ctx.fillRect(x, y, barWidth - 10, barHeight);
+
+
     ctx.fillStyle = '#000';
     ctx.textAlign = 'center';
     ctx.fillText(labels[index], x + (barWidth / 2) - 5, canvas.height - 10);
 
-    // Подпись значений
+
     ctx.fillText(value, x + (barWidth / 2) - 5, y - 5);
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'center';
+
   });
+
 
   // Рисуем ось Y
   ctx.beginPath();
-  ctx.moveTo(0, 10);
-  ctx.lineTo(0, canvas.height - 30);
+  ctx.moveTo(20, 10);
+  ctx.lineTo(20, canvas.height - 30);
   ctx.stroke();
+  ctx.save();
+
+  ctx.translate(0, 150);
+  ctx.rotate(-Math.PI / 2);
+
+  ctx.font = '12px Roboto';
+  ctx.fillStyle = 'red';
+  ctx.fillText(headers[1], 0, 10);
+  ctx.restore();
+
 
   // Рисуем ось X
   ctx.beginPath();
-  ctx.moveTo(0, canvas.height - 30);
+  ctx.moveTo(20, canvas.height - 30);
   ctx.lineTo(canvas.width, canvas.height - 30);
   ctx.stroke();
+
+  ctx.font = '12px Roboto';
+  ctx.fillStyle = 'red';
+  ctx.fillText(headers[0], canvas.width - 20, canvas.height - 10);
+}
+
+
+function createCanvasLinearGraph() {
+
+  const table = document.querySelector('#table-container > table');
+  const rows = table.querySelectorAll('tr');
+
+  const labels = [];
+  const values = [];
+  const headers = [];
+  const rowElements = rows[0].querySelectorAll('td')
+
+  for (let i = 0; i < rowElements.length; i++) {
+    const cells = rows[0].querySelectorAll('td');
+    headers.push(cells[i].innerText)
+  }
+
+  for (let i = 1; i < rows.length; i++) {
+    const cells = rows[i].querySelectorAll('td');
+    labels.push(cells[0].innerText);
+    values.push(parseInt(cells[1].innerText));
+  }
+
+  const canvas = document.getElementById('chart-canvas');
+  const ctx = canvas.getContext('2d');
+
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Y
+  ctx.beginPath();
+  ctx.font = '12px Roboto';
+  ctx.fillStyle = 'black';
+  ctx.moveTo(50, 10);
+  ctx.lineTo(50, canvas.height - 30);
+  ctx.stroke();
+  ctx.save();
+
+  ctx.translate(0, 150);
+  ctx.rotate(-Math.PI / 2);
+
+  ctx.font = '12px Roboto';
+  ctx.fillStyle = 'red';
+  ctx.fillText(headers[1], 0, 10);
+  ctx.restore();
+
+  // X
+  ctx.beginPath();
+  ctx.font = '12px Roboto';
+  ctx.fillStyle = 'black';
+  ctx.moveTo(50, canvas.height - 30);
+  ctx.lineTo(canvas.width, canvas.height - 30);
+  ctx.stroke();
+  ctx.font = '12px Roboto';
+  ctx.fillStyle = 'red';
+  ctx.fillText(headers[0], canvas.width - 20, canvas.height - 10);
+
+  const barWidth = (canvas.width - 40) / values.length;
+  const maxValue = Math.max(...values);
+  const minValue = Math.min(...values);
+
+  const padding = 10;
+  const totalHeight = canvas.height - 40;
+
+  ctx.beginPath();
+  const startX = 20 + barWidth / 2;
+  const startY = canvas.height - 30 - ((values[0] - minValue) / (maxValue - minValue) * (totalHeight - 2 * padding));
+  ctx.moveTo(startX, startY);
+
+  for (let i = 0; i < values.length; i++) {
+    const x = 20 + barWidth * i + barWidth / 2;
+    const y = canvas.height - 30 - ((values[i] - minValue) / (maxValue - minValue) * (totalHeight - 2 * padding));
+
+    ctx.lineTo(x , y);
+
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[i], x, canvas.height - 10);
+
+    ctx.save();
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'center';
+    ctx.translate(10, y);
+    ctx.fillText(values[i], 25, 0);
+    ctx.restore();
+  }
+
+  ctx.strokeStyle = 'blue';
+  ctx.stroke();
+
 }
 
 diagramTypeSelect.addEventListener('change', (e) => {
   console.log(e.target.value)
+  selectedDiagramType = e.target.value
+
+  if (selectedDiagramType === 'bar') {
+    createCanvasBarDiagram()
+  }
+
+  if (selectedDiagramType === 'linear') {
+    const canvas = document.getElementById('chart-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    createCanvasLinearGraph()
+  }
+
+  if (selectedDiagramType === 'pie') {
+    console.log('pie diagram')
+  }
 })
-chartButtonElement.addEventListener('click', () => {
+chartButtonElement.addEventListener('click', (e) => {
+  e.preventDefault();
   const canvas = document.getElementById('chart-canvas');
-  canvas.classList.remove('hidden')
-  createCanvas()
+  canvas.classList.remove('hidden');
+  createCanvasBarDiagram()
+
+
 })
 
