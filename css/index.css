@@ -81,7 +81,7 @@ html, body {
       font-size: 0.8rem;
     }
     & .drag-drop-container {
-      width: 100%;
+      display: block;
       height: 100px;
       margin-bottom: 10px;
       border: 1px dashed var(--mainBlack);
@@ -95,6 +95,9 @@ html, body {
         vertical-align: middle;
         color: var(--mainBlack);
         opacity: 0.4;
+      }
+      & + input {
+        display: none;
       }
       &.active {
         box-shadow: 1px 1px 5px var(--lighterBlue);
@@ -117,6 +120,10 @@ html, body {
   color: var(--mainWhite);
   transition: background-color 0.3s ease-in-out 0s;
 
+  &.download {
+    display: block;
+    text-align: center;
+  }
   &.export {
     display: block;
     margin-bottom: 10px;

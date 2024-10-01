@@ -24,7 +24,9 @@ const exportSVG = document.getElementById('export-svg');
 const printButton = document.getElementById('print');
 const canvasExportContainer = document.getElementById('canvas-export');
 const canvasContainerElement = document.getElementById('canvas-container')
-const canvasTitleElement = document.getElementById('canvas-title')
+const canvasTitleElement = document.getElementById('canvas-title');
+
+console.dir(inputUploadElement)
 
 let selectedFile = null
 let selectedDiagramType = '';
@@ -126,6 +128,8 @@ inputUploadElement.addEventListener('change', (event) => {
 
   if (checkFileType(file)) {
     selectedFile = file;
+    dropUploadedInfo.innerText = `Uploaded: ${selectedFile.name}`;
+    iconDownload.classList.add('hidden')
     submitButtonElement.disabled = false;
   } else {
     infoContainerElement.innerText = 'Incorrect file type! Allowed types - .csv, .json, .xls, .xlsx!'
