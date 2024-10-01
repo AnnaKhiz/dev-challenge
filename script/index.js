@@ -22,7 +22,9 @@ const exportPDF = document.getElementById('export-pdf');
 const exportPNG = document.getElementById('export-png');
 const exportSVG = document.getElementById('export-svg');
 const printButton = document.getElementById('print');
-const canvasExportContainer = document.getElementById('canvas-export')
+const canvasExportContainer = document.getElementById('canvas-export');
+const canvasContainerElement = document.getElementById('canvas-container')
+const canvasTitleElement = document.getElementById('canvas-title')
 
 let selectedFile = null
 let selectedDiagramType = '';
@@ -504,7 +506,8 @@ chartButtonElement.addEventListener('click', (e) => {
   const canvas = document.getElementById('chart-canvas');
 
   if (selectedDiagramType !== '') {
-    canvas.classList.remove('hidden');
+    canvasContainerElement.classList.remove('hidden');
+    canvasTitleElement.innerText = selectedFile.name.split('.')[0]
   }
 
   canvasExportContainer.classList.remove('hidden')

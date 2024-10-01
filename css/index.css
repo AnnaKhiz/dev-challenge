@@ -142,9 +142,17 @@ html, body {
   height: 100%;
   width: 80%;
   padding: 15px;
-  & > canvas {
-    margin: 50px auto;
+  & .canvas-container {
+    padding: 15px 0;
+    &.canvas-title {
+      font-size: 1.3rem;
+      text-align: center;
+    }
+    & > canvas {
+      margin: 10px auto;
+    }
   }
+
 }
 .aside-block-container {
   padding: 10px;
