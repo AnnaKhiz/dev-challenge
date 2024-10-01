@@ -1,5 +1,6 @@
 import { checkFileType, isJSON } from "./validation.js";
 import { createAxes, getTableData, createCanvas, getOrderAndDecimalSequence } from "./diagramsAndGraphs.js";
+import { exportToPNG, exportToSVG, printAndExportToPDF } from "./exportFunctions.js";
 
 const formatTypesList = document.querySelector('.form-list');
 const inputUploadElement = document.getElementById('upload-file');
@@ -17,10 +18,16 @@ const dropUploadedInfo = document.getElementById('drop-uploaded-info');
 const iconDownload = dragAndDropZone.querySelector('span.material-symbols-outlined');
 const chartOptionsContainerElement = document.getElementById('chart-options-container');
 const diagramTypeSelect = document.getElementById('diagram-type-select');
+const exportPDF = document.getElementById('export-pdf');
+const exportPNG = document.getElementById('export-png');
+const exportSVG = document.getElementById('export-svg');
+const printButton = document.getElementById('print');
+const canvasExportContainer = document.getElementById('canvas-export')
 
 let selectedFile = null
 let selectedDiagramType = '';
 let checkedLiElement = ''
+let context = null
 
 document.addEventListener('DOMContentLoaded', () => {
 	checkedLiElement = formatTypesList.querySelector('[checked]')
@@ -411,6 +418,7 @@ function createCanvasLinearGraph() {
     ctx.textAlign = 'center';
     ctx.fillText(labels[i], x, canvas.height - 10);
   }
+
 }
 
 function createCanvasPieDiagram() {
@@ -484,6 +492,7 @@ diagramTypeSelect.addEventListener('change', (e) => {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     createCanvasLinearGraph()
+
   }
 
   if (selectedDiagramType === 'pie') {
@@ -493,9 +502,22 @@ diagramTypeSelect.addEventListener('change', (e) => {
 chartButtonElement.addEventListener('click', (e) => {
   e.preventDefault();
   const canvas = document.getElementById('chart-canvas');
+
   if (selectedDiagramType !== '') {
     canvas.classList.remove('hidden');
   }
 
+  canvasExportContainer.classList.remove('hidden')
+
 })
+
+exportPNG.addEventListener('click', exportToPNG)
+
+exportSVG.addEventListener('click', exportToSVG)
+
+exportPDF.addEventListener('click', printAndExportToPDF)
+
+printButton.addEventListener('click', printAndExportToPDF)
+
+
 

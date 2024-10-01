@@ -14,7 +14,7 @@ export function createAxes(ctx, canvas, headers, selectedDiagramType) {
 
   ctx.font = '12px Roboto';
   ctx.fillStyle = '#D32F2F';
-  ctx.fillText(headers[1], 0, 10);
+  ctx.fillText(headers[1], 0, 15);
   ctx.restore();
 
   // X axis
@@ -22,11 +22,11 @@ export function createAxes(ctx, canvas, headers, selectedDiagramType) {
   ctx.font = '12px Roboto';
   ctx.strokeStyle = 'black';
   ctx.moveTo(50, canvas.height - 30);
-  ctx.lineTo(canvas.width, canvas.height - 30);
+  ctx.lineTo(canvas.width - 20, canvas.height - 30);
   ctx.stroke();
   ctx.font = '12px Roboto';
   ctx.fillStyle = '#D32F2F';
-  ctx.fillText(headers[0], canvas.width - 20, canvas.height - 10);
+  ctx.fillText(headers[0], canvas.width - 30, canvas.height - 10);
 }
 
 export function createCanvas() {
@@ -34,6 +34,9 @@ export function createCanvas() {
   const ctx = canvas.getContext('2d');
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   return { ctx, canvas }
 }
