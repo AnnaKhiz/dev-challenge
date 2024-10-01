@@ -54,11 +54,41 @@ export function getTableData() {
 
   for (let i = 1; i < rows.length; i++) {
     const cells = rows[i].querySelectorAll('td');
-    labels.push(cells[0].innerText);
-    values.push(parseInt(cells[1].innerText));
+    if (labels.includes(cells[0].innerText)) {
+      const index = labels.findIndex(el => el === cells[0].innerText)
+
+      if (index === -1) return;
+
+      values[index] = values[index] + parseInt(cells[1].innerText);
+    } else {
+      labels.push(cells[0].innerText);
+      values.push(parseInt(cells[1].innerText));
+    }
+  }
+  return { labels, values, headers }
+}
+
+export function getOrderAndDecimalSequence(number) {
+  if (number === 0) return;
+  const absNumber = Math.abs(number);
+
+  let order = 0;
+  let tempNumber = absNumber;
+
+  while (tempNumber >= 10) {
+    tempNumber /= 10;
+    order++;
   }
 
+  const baseValue = Math.pow(10, order - 1);
 
+  const decimalSequence = [];
+  let currentValue = baseValue;
 
-  return { labels, values, headers }
+  while (currentValue <= Math.ceil(absNumber / baseValue) * baseValue) {
+    decimalSequence.push(currentValue);
+    currentValue += baseValue;
+  }
+
+  return decimalSequence
 }

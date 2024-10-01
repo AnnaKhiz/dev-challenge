@@ -1,5 +1,5 @@
 import { checkFileType, isJSON } from "./validation.js";
-import { createAxes, getTableData, createCanvas } from "./diagramsAndGraphs.js";
+import { createAxes, getTableData, createCanvas, getOrderAndDecimalSequence } from "./diagramsAndGraphs.js";
 
 const formatTypesList = document.querySelector('.form-list');
 const inputUploadElement = document.getElementById('upload-file');
@@ -110,7 +110,7 @@ formatTypesList.addEventListener('click', (event) => {
 })
 
 inputUploadElement.addEventListener('change', (event) => {
-
+  infoContainerElement.innerText = '';
 	const file = inputUploadElement.files?.[0];
 
   console.log('file', file)
@@ -158,6 +158,12 @@ function uploadAndRenderJSONFile(e) {
 			submitButtonElement.disabled = true;
 			return;
 	}
+
+  if (!isJSON(content)) {
+    infoContainerElement.innerText = 'This file with errors!';
+    submitButtonElement.disabled = true;
+    return;
+  }
 
 	const parsedJSON = JSON.parse(content);
 
@@ -277,8 +283,9 @@ formElement.addEventListener('submit', (event) => {
     uploadFileData()
     chartOptionsContainerElement.classList.remove('hidden')
   }
-
 })
+
+
 
 function createCanvasBarDiagram() {
   const { labels, values, headers } = getTableData();
@@ -286,17 +293,21 @@ function createCanvasBarDiagram() {
 
   createAxes(ctx, canvas, headers);
 
-  const padding = 10;
+  const padding = 20;
   const totalHeight = canvas.height - 40;
   const barWidth = (canvas.width - 80) / values.length;
   const maxValue = Math.max(...values);
   const minValue = 0;
 
-  const ySegments = values.length;
-  const yStep = 20;
+  console.log(maxValue)
+
+  const yStep = getOrderAndDecimalSequence(maxValue);
+  const ySegments = yStep.length;
+
+  console.log(yStep)
 
   for (let i = 0; i <= ySegments; i++) {
-    const yValue = minValue + i * yStep; // Значение для подписи
+    const yValue = yStep[i]; // Значение для подписи
     const yPosition = canvas.height - 30 - (yValue / maxValue) * (totalHeight - 2 * padding); // Позиция по Y для подписи
 
     ctx.fillStyle = '#000';
@@ -315,6 +326,7 @@ function createCanvasBarDiagram() {
 
     ctx.save();
     ctx.fillStyle = '#000';
+    ctx.font = '10px Roboto';
     ctx.textAlign = 'center';
     ctx.fillText(values[i], x + (barWidth - 10) / 2, y - 5);
 
@@ -337,14 +349,17 @@ function createCanvasLinearGraph() {
   const maxValue = Math.max(...values);
   const minValue = 0;
 
-  const padding = 10;
+  const padding = 20;
   const totalHeight = canvas.height - 40;
 
-  const ySegments = values.length;
-  const yStep = 20;
+  const yStep = getOrderAndDecimalSequence(maxValue);
+  const ySegments = yStep.length;
+
+  // const ySegments = values.length;
+  // const yStep = 20;
 
   for (let i = 0; i <= ySegments; i++) {
-    const yValue = minValue + i * yStep;
+    const yValue = yStep[i];
     const yPosition = canvas.height - 30 - (yValue / maxValue) * (totalHeight - 2 * padding); // Позиция по Y для подписи
 
     // Рисуем подпись на оси Y
@@ -355,13 +370,13 @@ function createCanvasLinearGraph() {
   }
 
   ctx.beginPath();
-  const startX = 20 + barWidth / 2;
+  const startX = 50 + barWidth / 2;
   const startY = canvas.height - 30 - ((values[0] - minValue) / (maxValue - minValue) * (totalHeight - 2 * padding));
   ctx.moveTo(startX, startY);
 
 
   for (let i = 0; i < values.length; i++) {
-    const x = 20 + barWidth * i + barWidth / 2;
+    const x = 50 + barWidth * i + barWidth / 2;
     const y = canvas.height - 30 - ((values[i] - minValue) / (maxValue - minValue) * (totalHeight - 2 * padding));
 
     ctx.lineTo(x, y);
@@ -371,7 +386,7 @@ function createCanvasLinearGraph() {
   ctx.stroke();
 
   for (let i = 0; i < values.length; i++) {
-    const x = 20 + barWidth * i + barWidth / 2;
+    const x = 50 + barWidth * i + barWidth / 2;
     const y = canvas.height - 30 - ((values[i] - minValue) / (maxValue - minValue) * (totalHeight - 2 * padding));
 
     ctx.lineTo(x , y);
@@ -384,7 +399,12 @@ function createCanvasLinearGraph() {
 
     ctx.fillStyle = '#000';
     ctx.textAlign = 'center';
-    ctx.fillText(values[i], x, y - 10);
+    if (i % 2 === 0) {
+      ctx.fillText(values[i], x, y - 10);
+    } else {
+      ctx.fillText(values[i], x, y + 20);
+    }
+
     ctx.fillText(labels[i], x, canvas.height - 10);
 
     ctx.fillStyle = '#000';
