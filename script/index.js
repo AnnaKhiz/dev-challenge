@@ -1,6 +1,7 @@
 import { checkFileType, isJSON } from "./validation.js";
 import { createAxes, getTableData, createCanvas, getOrderAndDecimalSequence } from "./diagramsAndGraphs.js";
-import { exportToPNG, exportToSVG, printAndExportToPDF } from "./exportFunctions.js";
+import { exportToPNG, exportToSVG, printAndExportToPDF, increaseDiagram } from "./exportFunctions.js";
+import { updateCanvas } from "./customSettings.js";
 
 const formatTypesList = document.querySelector('.form-list');
 const inputUploadElement = document.getElementById('upload-file');
@@ -10,8 +11,9 @@ const submitButtonElement = document.getElementById('submit-button');
 const lIHiddenTextarea = formatTypesList.querySelector('li[data="textarea-hidden"]');
 const lIHiddenUpload = formatTypesList.querySelector('li[data="upload-hidden"]')
 const tableContainerElement = document.getElementById("table-container");
+const tableContentElement = document.getElementById("table-content");
 const textareaElement = document.getElementById('raw-data')
-const chartButtonElement = document.getElementById('chart-button');
+const createDiagramButton = document.getElementById('chart-button');
 const dragAndDropZone = document.getElementById('drag-drop-zone');
 const dragAndDropEvents = ["dragover", "drop"];
 const dropUploadedInfo = document.getElementById('drop-uploaded-info');
@@ -25,18 +27,73 @@ const printButton = document.getElementById('print');
 const canvasExportContainer = document.getElementById('canvas-export');
 const canvasContainerElement = document.getElementById('canvas-container')
 const canvasTitleElement = document.getElementById('canvas-title');
+const updateChartButtonElement = document.getElementById('update-chart-button');
+const customDiagramNameElement = document.getElementById('input-diagram-name');
+const formOptionalSettings = document.getElementById('form-optional-settings');
+const asideOptionalSettingsContainer = document.getElementById('aside-optional-container')
+
+
+
+
+formOptionalSettings.addEventListener('input', (e) => {
+  e.preventDefault();
+  const element = document.getElementById(e.target.dataset.countdown)
+
+  Number(element.innerText) !== 0 ? element.innerText -= 1 : element.innerText = 0
+})
+
 
 console.dir(inputUploadElement)
 
 let selectedFile = null
 let selectedDiagramType = '';
 let checkedLiElement = ''
-let context = null
+
+let customOptions = {
+  name: '',
+  lineColor: '#0056A2',
+  dotsColor: '#003366',
+  axisLabelColor: '#D32F2F',
+  yAxesName: '',
+  xAxesName: '',
+}
+let isUpdate = false;
 
 document.addEventListener('DOMContentLoaded', () => {
 	checkedLiElement = formatTypesList.querySelector('[checked]')
 })
 
+
+formOptionalSettings.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  isUpdate = true;
+  console.log('edit')
+
+  const form = new FormData(formOptionalSettings)
+
+  for (let [key, value] of form.entries()) {
+    console.log('value +++++++', key, value)
+    if (value) {
+      console.log('value', value)
+      customOptions[key] = value;
+
+    }
+    // else {
+    //   console.log(customOptions)
+    //   customOptions[key] = customOptions[key]
+    // }
+
+  }
+
+
+  console.log(customOptions)
+
+  // customOptions.name = customDiagramNameElement.value;
+
+  console.log('update custom name --- ', customOptions.name)
+  createDiagram()
+})
 
 
 dragAndDropEvents.forEach(function (event) {
@@ -126,7 +183,7 @@ inputUploadElement.addEventListener('change', (event) => {
 
   console.log('file', file)
 
-  if (checkFileType(file)) {
+  if (file && checkFileType(file)) {
     selectedFile = file;
     dropUploadedInfo.innerText = `Uploaded: ${selectedFile.name}`;
     iconDownload.classList.add('hidden')
@@ -154,9 +211,11 @@ function uploadAndRenderExcelFiles(e) {
 			return false;
 		}
 
-		tableContainerElement.innerHTML = XLSX.utils.sheet_to_html(ws);
+    chartOptionsContainerElement.classList.remove('hidden')
 
-	if (tableContainerElement.innerHTML !== '') {
+  tableContentElement.innerHTML = XLSX.utils.sheet_to_html(ws);
+
+	if (tableContentElement.innerHTML !== '') {
 		resetUploadFormData();
 		return
 	}
@@ -171,6 +230,8 @@ function uploadAndRenderJSONFile(e) {
 			submitButtonElement.disabled = true;
 			return;
 	}
+
+  chartOptionsContainerElement.classList.remove('hidden')
 
   if (!isJSON(content)) {
     infoContainerElement.innerText = 'This file with errors!';
@@ -196,7 +257,42 @@ function uploadAndRenderJSONFile(e) {
 	`).join('');
 
 	table.innerHTML = headerHTML + rowsHTML;
-	tableContainerElement.appendChild(table);
+  tableContentElement.appendChild(table);
+
+}
+
+function uploadAndRenderCSVFile(e) {
+  const content = selectedFile ? e.target.result.trim() : textareaElement.value;
+
+  if (content.trim().length === 0 || content === '[]') {
+    infoContainerElement.innerText = 'Emply file!';
+    submitButtonElement.disabled = true;
+    return ;
+  }
+
+  chartOptionsContainerElement.classList.remove('hidden')
+
+  const parsedCSV = content.split('\n').map(el => el.split(','));
+  const table = document.createElement('table');
+  const headers = parsedCSV[0];
+
+  const headerHTML = `
+			<tr>
+					${headers.map(header => `<td>${header}</td>`).join('')}
+			</tr>
+	`;
+
+  parsedCSV.splice(0,1);
+
+  const rowsHTML = parsedCSV.map(row => `
+			<tr>
+					${headers.map((key, index) => `<td>${row[index]}</td>`).join('')}
+			</tr>
+	`).join('');
+
+  table.innerHTML = headerHTML + rowsHTML;
+
+  tableContentElement.appendChild(table);
 
 }
 
@@ -205,39 +301,6 @@ function resetUploadFormData() {
 	infoContainerElement.innerText = '';
 	inputUploadElement.value = null;
 	submitButtonElement.disabled = false;
-}
-
-function uploadAndRenderCSVFile(e) {
-	const content = selectedFile ? e.target.result.trim() : textareaElement.value;
-
-	if (content.trim().length === 0 || content === '[]') {
-		infoContainerElement.innerText = 'Emply file!';
-		submitButtonElement.disabled = true;
-		return ;
-	}
-
-	const parsedCSV = content.split('\n').map(el => el.split(','));
-	const table = document.createElement('table');
-	const headers = parsedCSV[0];
-
-	const headerHTML = `
-			<tr>
-					${headers.map(header => `<td>${header}</td>`).join('')}
-			</tr>
-	`;
-
-	parsedCSV.splice(0,1);
-
-	const rowsHTML = parsedCSV.map(row => `
-			<tr>
-					${headers.map((key, index) => `<td>${row[index]}</td>`).join('')}
-			</tr>
-	`).join('');
-
-	table.innerHTML = headerHTML + rowsHTML;
-
-	tableContainerElement.appendChild(table);
-
 }
 
 function uploadRawData() {
@@ -285,26 +348,24 @@ function uploadFileData() {
 
 formElement.addEventListener('submit', (event) => {
 	event.preventDefault();
-	tableContainerElement.innerHTML = '';
+  tableContentElement.innerHTML = '';
   console.log(selectedFile)
   if (!selectedFile) {
     uploadRawData()
-    chartOptionsContainerElement.classList.remove('hidden')
+    tableContainerElement.classList.remove('hidden')
   } else {
     dropUploadedInfo.innerText = '';
     iconDownload.classList.remove('hidden')
     uploadFileData()
-    chartOptionsContainerElement.classList.remove('hidden')
+    tableContainerElement.classList.remove('hidden')
   }
 })
 
-
-
 function createCanvasBarDiagram() {
   const { labels, values, headers } = getTableData();
-  const { canvas, ctx } = createCanvas();
+  const { canvas, ctx } = createCanvas(customOptions.name);
 
-  createAxes(ctx, canvas, headers);
+  createAxes(ctx, canvas, headers, customOptions);
 
   const padding = 20;
   const totalHeight = canvas.height - 40;
@@ -334,7 +395,7 @@ function createCanvasBarDiagram() {
     const barHeight = (values[i] / maxValue) * (totalHeight - 2 * padding);
     const y = canvas.height - 30 - barHeight;
 
-    ctx.fillStyle = '#0056A2';
+    ctx.fillStyle = customOptions.lineColor;
     ctx.fillRect(x, y, barWidth - 10, barHeight);
 
     ctx.save();
@@ -354,9 +415,9 @@ function createCanvasBarDiagram() {
 
 function createCanvasLinearGraph() {
   const { labels, values, headers } = getTableData();
-  const { canvas, ctx } = createCanvas();
+  const { canvas, ctx } = createCanvas(customOptions.name);
 
-  createAxes(ctx, canvas, headers);
+  createAxes(ctx, canvas, headers, customOptions);
 
   const barWidth = (canvas.width - 80) / values.length;
   const maxValue = Math.max(...values);
@@ -364,6 +425,7 @@ function createCanvasLinearGraph() {
 
   const padding = 20;
   const totalHeight = canvas.height - 40;
+
 
   const yStep = getOrderAndDecimalSequence(maxValue);
   const ySegments = yStep.length;
@@ -377,7 +439,9 @@ function createCanvasLinearGraph() {
 
     // Рисуем подпись на оси Y
     ctx.fillStyle = '#000';
+    ctx.font = '10px Arial';
     ctx.textAlign = 'right';
+
     ctx.fillText(Math.round(yValue), 45, yPosition + 5);
 
   }
@@ -395,7 +459,7 @@ function createCanvasLinearGraph() {
     ctx.lineTo(x, y);
   }
 
-  ctx.strokeStyle = 'blue';
+  ctx.strokeStyle = customOptions.lineColor;
   ctx.stroke();
 
   for (let i = 0; i < values.length; i++) {
@@ -406,12 +470,14 @@ function createCanvasLinearGraph() {
 
     ctx.beginPath();
     ctx.arc(x, y, 2, 0, 2 * Math.PI);
-    ctx.fillStyle = '#003366';
+    ctx.fillStyle = customOptions.dotsColor;
     ctx.fill();
     ctx.closePath()
 
     ctx.fillStyle = '#000';
+    ctx.font = '10px Arial';
     ctx.textAlign = 'center';
+
     if (i % 2 === 0) {
       ctx.fillText(values[i], x, y - 10);
     } else {
@@ -421,7 +487,9 @@ function createCanvasLinearGraph() {
     ctx.fillText(labels[i], x, canvas.height - 10);
 
     ctx.fillStyle = '#000';
+    ctx.font = '10px Arial';
     ctx.textAlign = 'center';
+
     ctx.fillText(labels[i], x, canvas.height - 10);
   }
 
@@ -429,9 +497,9 @@ function createCanvasLinearGraph() {
 
 function createCanvasPieDiagram() {
   const { labels, values, headers } = getTableData();
-  const { canvas, ctx } = createCanvas();
+  const { canvas, ctx } = createCanvas(customOptions.name);
 
-  createAxes(ctx, canvas, headers);
+  createAxes(ctx, canvas, headers, customOptions);
 
   const total = values.reduce((sum, value) => sum + value, 0);
   const centerX = canvas.width / 2;
@@ -484,39 +552,63 @@ function createCanvasPieDiagram() {
 diagramTypeSelect.addEventListener('change', (e) => {
   console.log(e.target.value)
   selectedDiagramType = e.target.value;
-
-  if (selectedDiagramType !== '') {
-    chartButtonElement.disabled = false
-  }
-
-  if (selectedDiagramType === 'bar') {
-    createCanvasBarDiagram()
-  }
-
-  if (selectedDiagramType === 'linear') {
-    const canvas = document.getElementById('chart-canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    createCanvasLinearGraph()
-
-  }
-
-  if (selectedDiagramType === 'pie') {
-    createCanvasPieDiagram()
-  }
+  createDiagram()
 })
-chartButtonElement.addEventListener('click', (e) => {
+
+function createDiagram() {
+  if (isUpdate) {
+
+    const { name, lineColor, dotsColor, xAxesName, yAxesName, axisLabelColor} = customOptions;
+
+    customOptions.name = name || customOptions.name || '';
+    customOptions.lineColor = lineColor || customOptions.lineColor || '';
+    customOptions.dotsColor = dotsColor || customOptions.dotsColor || '';
+    customOptions.xAxesName = xAxesName || customOptions.xAxesName || '';
+    customOptions.yAxesName = yAxesName || customOptions.yAxesName || '';
+    customOptions.axisLabelColor = axisLabelColor || customOptions.axisLabelColor || ''
+
+    createDiagramButton.disabled = selectedDiagramType
+  } else {
+
+    if (selectedDiagramType !== '') {
+      customOptions.name = selectedFile.name.split('.')[0];
+      createDiagramButton.disabled = false
+
+    } else {
+      createDiagramButton.disabled = false
+    }
+  }
+
+  defineDiagramType();
+  canvasExportContainer.disabled = false
+}
+
+function updateDiagramSettings(field) {
+  if (!field || field === '') {
+    customOptions[field] = !field || field === '' ? customOptions[field] : '';
+  } else {
+    customOptions[field] = field
+  }
+}
+
+
+
+
+
+createDiagramButton.addEventListener('click', (e) => {
   e.preventDefault();
-  const canvas = document.getElementById('chart-canvas');
 
   if (selectedDiagramType !== '') {
     canvasContainerElement.classList.remove('hidden');
-    canvasTitleElement.innerText = selectedFile.name.split('.')[0]
+    canvasExportContainer.classList.remove('hidden')
+    asideOptionalSettingsContainer.classList.remove('hidden');
   }
 
-  canvasExportContainer.classList.remove('hidden')
+
 
 })
+
+canvasContainerElement.addEventListener('click', increaseDiagram)
 
 exportPNG.addEventListener('click', exportToPNG)
 
@@ -526,5 +618,11 @@ exportPDF.addEventListener('click', printAndExportToPDF)
 
 printButton.addEventListener('click', printAndExportToPDF)
 
-
+function defineDiagramType() {
+  switch (selectedDiagramType) {
+    case 'bar': return createCanvasBarDiagram();
+    case 'pie': return createCanvasPieDiagram();
+    default: return createCanvasLinearGraph()
+  }
+}
 

@@ -24,10 +24,36 @@ export function exportToSVG(e) {
 
 export function printAndExportToPDF(e) {
   e.preventDefault();
-  const { imageURL } = getCanvasImage();
 
   const pdfWindow = window.open('');
+  createPDFDocument(pdfWindow);
+  pdfWindow.focus();
+  pdfWindow.print();
+}
 
+export function increaseDiagram(e) {
+  e.preventDefault();
+  const pdfWindow = window.open('');
+
+  createPDFDocument(pdfWindow);
+}
+
+function getCanvasImage() {
+  const canvas = document.getElementById('chart-canvas');
+  const imageURL = canvas.toDataURL('image/png');
+
+  return { canvas, imageURL }
+}
+
+function clickHidden(url, ext) {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `canvas_image.${ext}`;
+  link.click();
+}
+
+function createPDFDocument(pdfWindow) {
+  const { imageURL } = getCanvasImage();
   pdfWindow.document.write(`
     <html lang="en">
       <head>
@@ -46,20 +72,4 @@ export function printAndExportToPDF(e) {
     </html>`);
 
   pdfWindow.document.close();
-  pdfWindow.focus();
-  pdfWindow.print();
-}
-
-function getCanvasImage() {
-  const canvas = document.getElementById('chart-canvas');
-  const imageURL = canvas.toDataURL('image/png');
-
-  return { canvas, imageURL }
-}
-
-function clickHidden(url, ext) {
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `canvas_image.${ext}`;
-  link.click();
 }

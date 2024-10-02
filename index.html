@@ -13,7 +13,48 @@
 </head>
 <body class="container main">
   <header class="main-header">
-      <h1>Building graphs according to uploaded data</h1>
+    <section class="header-title-container">
+      <div class="header-logo">
+        <div class="colored-logo-item">
+          <span></span>
+          <span></span>
+        </div>
+        <div class="site-name">
+          <a href="/">site.com.ua</a>
+          <span>Graphs and Diagrams creator</span>
+        </div>
+      </div>
+
+      <div class="header-title">
+        <a href="/">
+          <span class="material-symbols-outlined logo">history_edu</span>
+        </a>
+        <h1>Building graphs according to uploaded data</h1>
+      </div>
+
+      <nav class="header-info">
+        <ul class="header-info-list">
+          <li>
+            <span class="material-symbols-outlined">draw</span>
+            <a href="#">Option 1</a>
+          </li>
+          <li>
+            <span class="material-symbols-outlined">drive_folder_upload</span>
+            <a href="#">Option 2</a>
+          </li>
+          <li>
+            <span class="material-symbols-outlined">ink_pen</span>
+            <a href="#">Option 3</a>
+          </li>
+          <li>
+            <span class="material-symbols-outlined">folder_managed</span>
+            <a href="#">Option 4</a>
+          </li>
+        </ul>
+      </nav>
+
+    </section>
+
   </header>
   <main class="main-content">
     <section class="main-content-container">
@@ -33,7 +74,7 @@
             <li class="hidden" data="textarea-hidden" >
               <textarea name="textarea" id="raw-data" rows="5" ></textarea>
             </li>
-            <li data="upload-hidden" >
+            <li data="download-hidden" >
               <div class="drag-drop-container" id="drag-drop-zone">
                 <span class="material-symbols-outlined">download</span>
                 <span id="drop-uploaded-info"></span>
@@ -46,11 +87,14 @@
             </li>
           </ul>
           <p id="info-container"></p>
+
           <button class="submit-button" type="submit" disabled id="submit-button">Build table</button>
         </form>
 
-        <div id="chart-options-container" class="aside-block-container hidden" >
-          <form action="">
+        <section id="chart-options-container" class="hidden" >
+          <h3 class="form-title">Select options for diagram:</h3>
+          <form action="" class="aside-block-container">
+            <h4 class="form-elements-label">Required settings:</h4>
             <select name="diagram" id="diagram-type-select" class="chart-options-select">
               <option value="none" selected disabled>
                 Select diagram type
@@ -65,25 +109,73 @@
                 Pie chart
               </option>
             </select>
-            <button class="submit-button"  id="chart-button" disabled >Create canvas</button>
+            <button class="submit-button"  id="chart-button" disabled >Create diagram</button>
           </form>
-        </div>
+        </section>
 
-        <div class="canvas-export hidden aside-block-container" id="canvas-export">
-          <button class="submit-button export"  id="export-pdf" >Export to PDF</button>
-          <button class="submit-button export"  id="export-png" >Export to PNG</button>
-          <button class="submit-button export"  id="export-svg" >Export to SVG</button>
-          <button class="submit-button export"  id="print" >Print</button>
-        </div>
+        <section class="aside-block-container hidden" id="aside-optional-container">
+          <h4 class="form-elements-label">Optional settings:</h4>
+          <form action="" name="form-optional-settings" id="form-optional-settings">
+
+            <div class="optional-settings-section ">
+              <label for="x-axes-name" class="form-elements-label no-background" >Enter new name for X-axis:</label>
+              <input data-countdown="x-symbols-countdown" type="text" name="xAxesName" placeholder="Enter new name for X-axes here..." id="x-axes-name" class="chart-options-select small-margin" maxlength="10">
+              <p class="countdown-label"><span id="x-symbols-countdown">10</span> / 10</p>
+            </div>
+
+            <div class="optional-settings-section ">
+              <label for="y-axes-name" class="form-elements-label no-background" >Enter new name for Y-axis:</label>
+              <input data-countdown="y-symbols-countdown" type="text" name="yAxesName" placeholder="Enter new name for Y-axes here..." id="y-axes-name" class="chart-options-select small-margin" maxlength="30">
+              <p class="countdown-label"><span id="y-symbols-countdown">30</span> / 30</p>
+            </div>
+
+            <div class="optional-settings-section ">
+              <label for="input-diagram-name" class="form-elements-label no-background" >Enter new diagram/graph name:</label>
+              <input data-countdown="name-countdown" type="text" name="name" placeholder="Enter diagram name here..." id="input-diagram-name" class="chart-options-select small-margin" maxlength="30">
+              <p class="countdown-label"><span id="name-countdown">30</span> / 30</p>
+            </div>
+
+            <div class="optional-settings-section">
+              <label for="input-custom-line-color" class="form-elements-label no-background" >Select line/bar color:</label>
+              <input type="color" name="lineColor" id="input-custom-line-color" value="#0056A2">
+            </div>
+
+            <div class="optional-settings-section">
+              <label for="input-custom-dots-color" class="form-elements-label no-background" >Select dots color (for linear diagram):</label>
+              <input type="color" name="dotsColor" id="input-custom-dots-color" value="#003366">
+            </div>
+
+            <div class="optional-settings-section">
+              <label for="input-custom-labels-color" class="form-elements-label no-background" >Select color for axis labels:</label>
+              <input type="color" name="axisLabelColor" id="input-custom-labels-color" value="#D32F2F">
+            </div>
+
+            <button class="submit-button"  id="update-chart-button" type="submit" >Update canvas</button>
+          </form>
+        </section>
+
+        <section id="canvas-export" class="hidden">
+          <h3 class="form-title">Export diagram:</h3>
+          <div class="canvas-export aside-block-container" >
+            <button class="submit-button export"  id="export-pdf" >Export to PDF</button>
+            <button class="submit-button export"  id="export-png" >Export to PNG</button>
+            <button class="submit-button export"  id="export-svg" >Export to SVG</button>
+            <button class="submit-button export"  id="print" >Print</button>
+          </div>
+        </section>
+
 
       </aside>
       <section class="main-data-container">
         <div class="canvas-container hidden" id="canvas-container">
-          <h2 class="canvas-title" id="canvas-title">Title</h2>
           <canvas id="chart-canvas" width="900" height="500"></canvas>
         </div>
 
-        <div id="table-container"></div>
+        <div id="table-container" class="table-container hidden">
+          <h2>Table data from downloaded file</h2>
+          <div id="table-content" class="table-content"></div>
+        </div>
+
 
       </section>
     </section>
@@ -91,7 +183,17 @@
 
   </main>
   <footer class="main-footer">
-      footer
+    <nav class="footer-navigation">
+      <ul class="footer-menu-list">
+        <li><a href="#">Option 1</a></li>
+        <li><a href="#">Option 2</a></li>
+        <li><a href="#">Option 3</a></li>
+        <li><a href="#">Option 4</a></li>
+        <li><a href="#">Option 5</a></li>
+        <li><a href="#">Option 6</a></li>
+      </ul>
+    </nav>
+
   </footer>
 
 </body>
